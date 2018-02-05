@@ -3,6 +3,7 @@
 	xmlns:batch="http://www.springframework.org/schema/batch" 
 	xmlns:util="http://www.springframework.org/schema/util"
 	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:listeners="http:// www.springframework.org/schema/batch/listeners"	
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/batch
 	http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
@@ -10,8 +11,10 @@
 	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 	http://www.springframework.org/schema/util
 	http://www.springframework.org/schema/util/spring-util-4.0.xsd">
-		
-	<!-- <import resource="../servlet/override/context-config.xml" /> -->	
+	
+	
+	
+	 <import resource="../servlet/override/context-config.xml" /> 
 		
 		
 	  <bean
@@ -35,23 +38,38 @@
 			<tasklet ref="MyTaskletBean" />
 		</step>
 		
+		
 	</job>
+	
+	
+	
 	
 	<job id="helloWorldJob" xmlns="http://www.springframework.org/schema/batch">
 		<step id="readwritedata" next="mystep2">
 			<tasklet>
 				<chunk reader="csvFileItemReader" writer="xmlItemWriter" processor="itemProcessor"
-					commit-interval="10">
+					commit-interval="100">
 				</chunk>
-			</tasklet>
-		</step>
-			<step id="mystep2"  allow-start-if-complete="true">
-			<tasklet ref="MyTaskletBean" />
+				<listeners>
+					<listener ref="jobExitStatusListener" />
+				</listeners>
+				
+			</tasklet>			
 		</step>
 		
+		<step id="mystep2"  allow-start-if-complete="true">
+			<tasklet ref="MyTaskletBean" />
+			
+		</step>
+		
+		<listeners>
+			<listener ref="jobExitStatusListener" />
+		</listeners>
 	</job>
-	<bean id="MyTaskletBean" class="com.demo.model.MyTask"/>
 	
+	<bean id="jobExitStatusListener" class="com.demo.mail.SendMailListener"/>
+
+	<bean id="MyTaskletBean" class="com.demo.model.MyTask"/>
 	
 	
 	  <bean id="carrier" class="com.demo.model.Carrier" scope="prototype" />
@@ -78,6 +96,7 @@
 
 	</bean>
 
+	
 	<bean id="xmlItemWriter" class="org.springframework.batch.item.xml.StaxEventItemWriter">
 		<property name="resource" value="file:F:/outputs/report.xml" />
 		<property name="marshaller" ref="reportMarshaller" />

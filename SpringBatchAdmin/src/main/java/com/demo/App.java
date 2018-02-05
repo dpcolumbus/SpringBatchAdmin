@@ -45,11 +45,12 @@ public class App {
 		System.out.println("Job Start Time : " + jobExecution.getStartTime());
 		System.out.println("Job End Time : " + jobExecution.getEndTime());
 		System.out.println("Job getStepExecutions : " + jobExecution.getStepExecutions().toString());
+		//System.out.println("jobExecution:::"+jobExecution.getExitStatus().getExitDescription());
 	    System.out.println("*************************End JOB Summary*****************************************");
       
         
       //jobLauncher.run("CustomJob")
-        jobExecution = jobLauncher.run(job2, jobParameters);
+       jobExecution = jobLauncher.run(job2, jobParameters);
         //JobExecution jobExecution = jobLauncherTestUtils.launchStep("step1");
         System.out.println("*************************JOB Summary*****************************************");
         System.out.println("Job Name : " + jobExecution.getJobInstance().getJobName());

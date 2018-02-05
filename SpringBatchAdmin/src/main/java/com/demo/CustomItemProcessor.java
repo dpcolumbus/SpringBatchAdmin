@@ -10,7 +10,7 @@ public class CustomItemProcessor implements ItemProcessor<Carrier, Carrier> {
 	@Override
 	public Carrier process(Carrier item) throws Exception {
 		
-		System.out.println("Processing..." + item);
+		//System.out.println("Processing..." + item.getLegalname());
 		return item;
 	}
 

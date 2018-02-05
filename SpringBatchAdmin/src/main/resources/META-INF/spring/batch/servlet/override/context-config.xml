@@ -8,6 +8,7 @@
 	    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
 	<!-- using in-memory store for batch meta-data --> 
+	
 	<bean id="jobRepository"
 		class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
 		<property name="dataSource" ref="dataSource" />
@@ -18,11 +19,50 @@
 	<bean id="transactionManager"
 		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
 	 
-	<bean id="jobLauncher"
+	 <bean id="jobLauncher"
 		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository" />
+	</bean>  
+	
+	
+		
+		
+		
+		
+		
+	<!-- 	 spring batch without the tables
+	<bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" lazy-init="true">
 	</bean>
+	<bean id="jobRepository"
+		class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean"
+		lazy-init="true"  autowire-candidate="false" >
+       <property name="transactionManager" ref="transactionManager" />
+</bean>
+	<bean id="jobRegistry"
+		class="org.springframework.batch.core.configuration.support.MapJobRegistry" /> -->
+		
+		
+		
+	 <!-- <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="taskExecutor">
+        <bean class="org.springframework.core.task.ThreadPoolTaskExecutor">
+          
+        </bean>
+    </property>
+</bean> -->
 
+
+
+
+     <!--   <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="taskExecutor">
+        <bean class="org.springframework.core.task.SimpleAsyncTaskExecutor">
+            <property name="concurrencyLimit" value="2" />
+        </bean>
+    </property>
+</bean> -->
 	
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -42,12 +82,6 @@
    
 	
 	
-	<!-- Create meta-tables. Here we are also invoking the initial-query.sql script  
-	<jdbc:initialize-database data-source="dataSource">
-	    <jdbc:script location="classpath:hsqldb/initial-query.sql" />
-		<jdbc:script location="classpath*:org/springframework/batch/core/schema-drop-hsqldb.sql" />
-		<jdbc:script location="classpath*:org/springframework/batch/core/schema-hsqldb.sql" />
-    </jdbc:initialize-database>-->  
    
 
 </beans>
