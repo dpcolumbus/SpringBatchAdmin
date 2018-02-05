@@ -11,7 +11,7 @@
 	http://www.springframework.org/schema/util
 	http://www.springframework.org/schema/util/spring-util-4.0.xsd">
 		
-	<!-- <import resource="../servlet/override/context-config.xml" /> -->	
+	 <import resource="../servlet/override/context-config.xml" /> 
 		
 		
 	  <bean
@@ -35,13 +35,14 @@
 			<tasklet ref="MyTaskletBean" />
 		</step>
 		
+		
 	</job>
 	
 	<job id="helloWorldJob" xmlns="http://www.springframework.org/schema/batch">
 		<step id="readwritedata" next="mystep2">
 			<tasklet>
 				<chunk reader="csvFileItemReader" writer="xmlItemWriter" processor="itemProcessor"
-					commit-interval="10">
+					commit-interval="100">
 				</chunk>
 			</tasklet>
 		</step>

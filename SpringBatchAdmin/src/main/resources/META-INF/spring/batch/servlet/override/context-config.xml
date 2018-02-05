@@ -18,11 +18,29 @@
 	<bean id="transactionManager"
 		class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
 	 
-	<bean id="jobLauncher"
+	 <bean id="jobLauncher"
 		class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
 		<property name="jobRepository" ref="jobRepository" />
-	</bean>
+	</bean> 
+	
+	 <!-- <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="taskExecutor">
+        <bean class="org.springframework.core.task.ThreadPoolTaskExecutor">
+          
+        </bean>
+    </property>
+</bean> -->
 
+
+     <!--   <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+        <property name="jobRepository" ref="jobRepository" />
+        <property name="taskExecutor">
+        <bean class="org.springframework.core.task.SimpleAsyncTaskExecutor">
+            <property name="concurrencyLimit" value="2" />
+        </bean>
+    </property>
+</bean> -->
 	
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
