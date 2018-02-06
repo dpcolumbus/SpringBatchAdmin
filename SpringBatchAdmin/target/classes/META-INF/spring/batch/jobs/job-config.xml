@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:batch="http://www.springframework.org/schema/batch" 
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:listeners="http:// www.springframework.org/schema/batch/listeners"	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/batch
+	http://www.springframework.org/schema/batch/spring-batch-3.0.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	
+	
+	
+	 <import resource="../servlet/override/context-config.xml" /> 
+		
+		
+	  <bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:batch-default.properties
+				</value>								
+			</list>
+		</property>
+		<property name="searchSystemEnvironment" value="true" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="ignoreUnresolvablePlaceholders" value="true" />
+	</bean>
+	
+	
+	
+	
+	<job id="CustomJob" xmlns="http://www.springframework.org/schema/batch">
+		<step id="customclasscall">
+			<tasklet ref="MyTaskletBean" />
+		</step>
+		
+		
+	</job>
+	
+	
+	
+	
+	<job id="helloWorldJob" xmlns="http://www.springframework.org/schema/batch">
+		<step id="readwritedata" next="mystep2">
+			<tasklet>
+				<chunk reader="csvFileItemReader" writer="xmlItemWriter" processor="itemProcessor"
+					commit-interval="100">
+				</chunk>
+				<listeners>
+					<listener ref="jobExitStatusListener" />
+				</listeners>
+				
+			</tasklet>			
+		</step>
+		
+		<step id="mystep2"  allow-start-if-complete="true">
+			<tasklet ref="MyTaskletBean" />
+			
+		</step>
+		
+		<listeners>
+			<listener ref="jobExitStatusListener" />
+		</listeners>
+	</job>
+	
+	<bean id="jobExitStatusListener" class="com.demo.mail.SendMailListener"/>
+
+	<bean id="MyTaskletBean" class="com.demo.model.MyTask"/>
+	
+	
+	  <bean id="carrier" class="com.demo.model.Carrier" scope="prototype" />
+	<bean id="itemProcessor" class="com.demo.CustomItemProcessor" />
+	<bean id="csvFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader">
+
+		<property name="resource" value="classpath:input/carrier_usdot.csv" />
+
+		<property name="lineMapper">
+			<bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+				<property name="lineTokenizer">
+					<bean
+						class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+						<property name="names" value="docket,usdot,legalname,dbaname,address,city,state,zip" />
+					</bean>
+				</property>
+				<property name="fieldSetMapper">
+				    <bean class="com.demo.ReportFieldSetMapper" />
+				    
+				  
+				</property>
+			</bean>
+		</property>
+
+	</bean>
+
+	
+	<bean id="xmlItemWriter" class="org.springframework.batch.item.xml.StaxEventItemWriter">
+		<property name="resource" value="file:F:/outputs/report.xml" />
+		<property name="marshaller" ref="reportMarshaller" />
+		<property name="rootTagName" value="report" />
+	</bean>
+
+	<bean id="reportMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="classesToBeBound">
+			<list>
+				<value>com.demo.model.Carrier</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+ 
+
+   	
+</beans>
